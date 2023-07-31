@@ -1,3 +1,10 @@
+# Folders
+fw/Release
+fw/Debug
+kicad/cdm324_v2/cdm324_v2-backups
+kicad/cdm324_exp/cdm324_exp-backups
+scripts/archives
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
