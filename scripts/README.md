@@ -1,6 +1,6 @@
-## Python Scripts
+# Python Scripts
 Unfortunately these scripts are only compatible with Windows at the moment. 
-However pull requests are welcome!
+Pull requests are however welcome!
 
 ## Requirements - Windows
 1) install c++ build tools from https://visualstudio.microsoft.com/visual-cpp-build-tools/, select :
@@ -10,5 +10,5 @@ However pull requests are welcome!
 
 2) python modules
 ```
-pip install pyqt5 chaco
+pip install pyqt5 chaco stm32loader
 ```
