@@ -8,7 +8,7 @@ Pull requests are however welcome!
 - Testing tools core features
 - Windows 10 SDK
 
-2) python modules
+2) Install python and the required modules
 ```
 pip install pyqt5 chaco stm32loader
 ```
