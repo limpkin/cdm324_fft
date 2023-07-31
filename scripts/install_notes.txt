@@ -1,0 +1,6 @@
+// NOT NEEDED // - unzip swig 3.0x, modify path environment variable to point to the unzipped folder
+- install c++ build tools from https://visualstudio.microsoft.com/visual-cpp-build-tools/, select :
+	- C++ CMake tools for Windows (it will select MSVC 2022)
+	- Testing tools core features
+	- Windows 10 SDK
+- pip install pyqt5 chaco
