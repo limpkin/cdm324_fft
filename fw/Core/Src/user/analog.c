@@ -211,7 +211,7 @@ uint16_t analog_compute_fft_on_cplted_sequence(BOOL remove_low_freqs)
 	arm_max_f32(analog_temp_float_array, ARRAY_SIZE(analog_result_buffer1)/2, &max_value, &max_index);
 
 	/* Fill current peak index if peak is valid */
-	if (max_value < 40000)
+	if (max_value < 100000)
 	{
 		analog_last_peak_indexes[analog_cur_peak_fill_idx++] = 0;
 	}

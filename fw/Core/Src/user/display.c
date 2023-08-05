@@ -42,6 +42,12 @@ BOOL display_init(void)
 	/* Ping the controller */
 	if (HAL_I2C_IsDeviceReady(&hi2c1, DISPLAY_I2C_ADDR, 1, 10) == HAL_OK)
 	{
+		/* Software reset the controller */
+		uint8_t reset_reg[] = {0b00101100};
+		HAL_I2C_Mem_Write(&hi2c1, DISPLAY_I2C_ADDR, 0x00, I2C_MEMADD_SIZE_8BIT, reset_reg, 1, HAL_MAX_DELAY);
+		reset_reg[0] = 0x00;
+		HAL_I2C_Mem_Write(&hi2c1, DISPLAY_I2C_ADDR, 0x00, I2C_MEMADD_SIZE_8BIT, reset_reg, 1, HAL_MAX_DELAY);
+
 		/* Configure the controller: 1/4 duty, 1/3 bias */
 		uint8_t disp_ctrl_1[] = {0x01};
 		HAL_I2C_Mem_Write(&hi2c1, DISPLAY_I2C_ADDR, 0x02, I2C_MEMADD_SIZE_8BIT, disp_ctrl_1, 1, HAL_MAX_DELAY);
