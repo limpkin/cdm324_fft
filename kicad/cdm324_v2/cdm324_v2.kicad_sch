@@ -2754,7 +2754,7 @@
     (property "Datasheet" "~" (at 91.44 104.14 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Field4" "" (at 91.44 104.14 90)
+    (property "Field4" "https://www.digikey.com/en/products/detail/yageo/RC0603FR-07620KL/727338" (at 91.44 104.14 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid cd0b50f1-64bf-454c-b92e-07611e712bfe))
