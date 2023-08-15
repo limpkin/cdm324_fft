@@ -11,9 +11,11 @@
 #define SWITCH_GPIO_Port 	GPIOA
 #define SPI_SS_Pin 			GPIO_PIN_15
 #define SPI_SS_GPIO_Port 	GPIOA
+#define SD_CS_Pin 			SPI_SS_Pin
+#define SD_CS_GPIO_Port 	SPI_SS_GPIO_Port
 
 /* Prototypes */
 BOOL expander_is_kph_selected(void);
-void expander_init(void);
+BOOL expander_init(void);
 
 #endif

@@ -19,6 +19,7 @@
 void main_user(void)
 {
 	BOOL output_debug_enabled = FALSE;
+	BOOL sd_card_initialized = FALSE;
 	BOOL remove_low_freqs = FALSE;
 	uint16_t last_fft_return = 0;
 	uint16_t fft_nb_counter = 0;
@@ -47,7 +48,10 @@ void main_user(void)
 	analog_init();
 
 	/* IO expander init */
-	expander_init();
+	if (expander_init() != FALSE)
+	{
+		sd_card_initialized = TRUE;
+	}
 
 	/* Trigger analog conversions */
 	analog_trigger_conversion();

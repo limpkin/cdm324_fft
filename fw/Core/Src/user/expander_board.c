@@ -2,12 +2,16 @@
 #include "fatfs.h"
 /* SPI to the sd card */
 SPI_HandleTypeDef hspi3;
+/* Variables to write to the SD card */
+FATFS expander_board_fs;
+FIL expander_board_file;
 
 
 /*! \fn     expander_init(void)
 *   \brief  Expander initialization code
+*   \return TRUE if a SD card is detected
 */
-void expander_init(void)
+BOOL expander_init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -18,7 +22,7 @@ void expander_init(void)
 	/* Configure GPIO pins: SD card detect */
 	GPIO_InitStruct.Pin = SD_CD_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	HAL_GPIO_Init(SD_CD_Pin_Port, &GPIO_InitStruct);
 
 	/* Configure GPIO pins: user switch */
@@ -61,6 +65,25 @@ void expander_init(void)
 
 	/* FatFS library init */
 	MX_FATFS_Init();
+
+	/* uSD card inserted? */
+	if (HAL_GPIO_ReadPin(SD_CD_Pin_Port, SD_CD_Pin) == GPIO_PIN_RESET)
+	{
+		/* Mount filesystem */
+		f_mount(&expander_board_fs, "", 0);
+
+		/* Test code */
+		/*f_open(&expander_board_file, "test.txt", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
+		f_lseek(&expander_board_file, expander_board_file.fsize);
+		f_puts("This is an example text to check SD Card Module with STM32 Blue Pill\n", &expander_board_file);
+		f_close(&expander_board_file);*/
+
+		/* Return success */
+		return TRUE;
+	}
+
+	/* No uSD card */
+	return FALSE;
 }
 
 /*! \fn     expander_is_kph_selected(void)

@@ -68,7 +68,7 @@ def _create_plot_component(obj):
 	plot_rends = list(obj.device_spectrum_plot.plots.values())
 	spec_range = plot_rends[0][0].value_mapper.range
 	spec_range.low = 0.0
-	spec_range.high = 500000.0
+	spec_range.high = 300000.0
 	obj.device_spectrum_plot.index_axis.title = "Speed (km/h)"
 	obj.device_spectrum_plot.value_axis.title = "Amplitude"
 	
