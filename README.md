@@ -1,5 +1,8 @@
 # CDM324 v2 FFT Project
 This repository contains the source files created for the making of the CDM324 project described on <a href="https://www.limpkin.fr">limpkin.fr
+<p align="center">
+  <img src="https://github.com/limpkin/cdm324_fft/blob/main/assets/cdm_and_exp.JPG?raw=true" alt="CDM324"/>
+</p>
 
 ## Repository Structure
 - <b>datasheets</b>: main components datasheets
