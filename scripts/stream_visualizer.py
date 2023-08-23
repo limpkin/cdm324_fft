@@ -21,6 +21,7 @@ from chaco.api import Plot, ArrayPlotData, HPlotContainer, VPlotContainer
 
 # Imports for core program
 import numpy as np
+import datetime
 import keyboard
 import serial
 import array
@@ -72,21 +73,22 @@ def _create_plot_component(obj):
 	obj.device_spectrum_plot.index_axis.title = "Speed (km/h)"
 	obj.device_spectrum_plot.value_axis.title = "Amplitude"
 	
-	# Setup the spectrum plot
-	frequencies = linspace(0.0, FFT_LGTH_TRUNCATE, num=FFT_LGTH_TRUNCATE)
-	obj.spectrum_data = ArrayPlotData(frequency=frequencies)
-	empty_amplitude = zeros(NUM_SAMPLES // 2)
-	obj.spectrum_data.set_data("amplitude", empty_amplitude)
-	obj.spectrum_plot = Plot(obj.spectrum_data)
-	obj.spectrum_plot.plot(("frequency", "amplitude"), name="Spectrum", color="red", renderstyle='hold')
-	obj.spectrum_plot.padding = 50
-	obj.spectrum_plot.title = "Spectrum"
-	plot_rends = list(obj.spectrum_plot.plots.values())
-	spec_range = plot_rends[0][0].value_mapper.range
-	spec_range.low = 0.0
-	spec_range.high = 200.0
-	obj.spectrum_plot.index_axis.title = "Frequency (Hz)"
-	obj.spectrum_plot.value_axis.title = "Amplitude"
+	# Setup the computer computed spectrum plot
+	if False:
+		frequencies = linspace(0.0, FFT_LGTH_TRUNCATE, num=FFT_LGTH_TRUNCATE)
+		obj.spectrum_data = ArrayPlotData(frequency=frequencies)
+		empty_amplitude = zeros(NUM_SAMPLES // 2)
+		obj.spectrum_data.set_data("amplitude", empty_amplitude)
+		obj.spectrum_plot = Plot(obj.spectrum_data)
+		obj.spectrum_plot.plot(("frequency", "amplitude"), name="Spectrum", color="red", renderstyle='hold')
+		obj.spectrum_plot.padding = 50
+		obj.spectrum_plot.title = "Spectrum"
+		plot_rends = list(obj.spectrum_plot.plots.values())
+		spec_range = plot_rends[0][0].value_mapper.range
+		spec_range.low = 0.0
+		spec_range.high = 200.0
+		obj.spectrum_plot.index_axis.title = "Frequency (Hz)"
+		obj.spectrum_plot.value_axis.title = "Amplitude"
 
 	# Spectrogram plot
 	spectrogram_data = zeros((FFT_LGTH_TRUNCATE, SPECTROGRAM_LENGTH))
@@ -121,14 +123,14 @@ skip_low_freqs = False
 class TimerController(HasTraits):
 	def onTimer(self, *args):
 		global platform_serial_initialized
+		global adc_average_fill_index
+		global adc_average_array
 		global counter
 		#print(counter)
 		counter += 1
 		
 		# Debug choices
 		sync_prot = True
-		raw_data_fetch = True
-		fft_data_fetch = True
 		
 		# keyboard shortcut pressed?
 		if keyboard.is_pressed("h") and skip_low_freqs == False:
@@ -151,21 +153,25 @@ class TimerController(HasTraits):
 				platform_serial.read(platform_serial.in_waiting)				
 	
 		#sys.stdout.write(str(platform_serial.in_waiting) + " ")
+		# Buffer back log: skip one frame
+		if platform_serial.in_waiting > 2 * (NUM_SAMPLES*2 + FFT_LGTH_TRUNCATE*4):
+			platform_serial.read(NUM_SAMPLES*2 + FFT_LGTH_TRUNCATE*4)
+			print(str(datetime.datetime.now()) + ": skipping one frame")
+		
 		# Get raw adc data (NUM_SAMPLES uint16_t)
-		if raw_data_fetch:
-			raw_adc_data = platform_serial.read(NUM_SAMPLES*2)
-			dt = np.dtype(np.uint16)
-			dt = dt.newbyteorder('<')
-			raw_adc_data = np.frombuffer(raw_adc_data, dtype=dt)
+		raw_adc_data = platform_serial.read(NUM_SAMPLES*2)
+		dt = np.dtype(np.uint16)
+		dt = dt.newbyteorder('<')
+		raw_adc_data = np.frombuffer(raw_adc_data, dtype=dt)
+		self.time_data.set_data("amplitude", raw_adc_data)
 		
 		# Get FFT data
-		if fft_data_fetch:
-			serial_fft_data = platform_serial.read(FFT_LGTH_TRUNCATE*4)
-			dt = np.dtype(np.single)
-			dt = dt.newbyteorder('<')
-			serial_fft_data = np.frombuffer(serial_fft_data, dtype=dt)
-			#print(max(serial_fft_data))
-			self.device_spectrum_data.set_data("amplitude", serial_fft_data)
+		serial_fft_data = platform_serial.read(FFT_LGTH_TRUNCATE*4)
+		dt = np.dtype(np.single)
+		dt = dt.newbyteorder('<')
+		serial_fft_data = np.frombuffer(serial_fft_data, dtype=dt)
+		#print(max(serial_fft_data))
+		self.device_spectrum_data.set_data("amplitude", serial_fft_data)
 		
 		# debug
 		if False:
@@ -173,32 +179,28 @@ class TimerController(HasTraits):
 			arrayyy = np.frombuffer(raw_adc_data, dtype=dt)
 			print("Min: " + str(np.min(arrayyy)) + ", max: " + str(np.max(arrayyy)) + " at index " + " " . join(str(i) for i in np.where(arrayyy == np.max(arrayyy))))
 		
-		if raw_data_fetch:
-			# Update average
-			global adc_average_array
-			global adc_average_fill_index
-			adc_average_array[adc_average_fill_index] = np.mean(raw_adc_data)
-			adc_average_fill_index += 1
-			if adc_average_fill_index == len(adc_average_array):
-				adc_average_fill_index = 0		
-		
-			# Compute fft
-			normalized_data = np.array(raw_adc_data, copy=True)  
-			normalized_data = (normalized_data - np.mean(adc_average_array)) / 2048
-			spectrum = abs(fft.fft(normalized_data))[: NUM_SAMPLES // 2]
-			spectrum = spectrum[:FFT_LGTH_TRUNCATE]
-			time = raw_adc_data
-		
+		# Update average
+		adc_average_array[adc_average_fill_index] = np.mean(raw_adc_data)
+		adc_average_fill_index += 1
+		if adc_average_fill_index == len(adc_average_array):
+			adc_average_fill_index = 0		
+	
+		# Compute fft
+		normalized_data = np.array(raw_adc_data, copy=True)  
+		normalized_data = (normalized_data - np.mean(adc_average_array)) / 2048
+		spectrum = abs(fft.fft(normalized_data))[: NUM_SAMPLES // 2]
+		spectrum = spectrum[:FFT_LGTH_TRUNCATE]
+	
+		# We don't display computer computed fft data anymore
+		if False:
 			self.spectrum_data.set_data("amplitude", spectrum)
-			self.time_data.set_data("amplitude", time)
-			spectrogram_data = self.spectrogram_plotdata.get_data("imagedata")
-			spectrogram_data = hstack(
-				(spectrogram_data[:, 1:], transpose([spectrum]))
-			)
-			self.spectrogram_plotdata.set_data("imagedata", spectrogram_data)
-		
-		# redraw
-		self.spectrum_plot.request_redraw()
+			self.spectrum_plot.request_redraw()
+			
+		spectrogram_data = self.spectrogram_plotdata.get_data("imagedata")
+		spectrogram_data = hstack(
+			(spectrogram_data[:, 1:], transpose([spectrum]))
+		)
+		self.spectrogram_plotdata.set_data("imagedata", spectrogram_data)
 
 
 # ============================================================================
