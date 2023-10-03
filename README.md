@@ -1,5 +1,6 @@
 # CDM324 v2 FFT Project
-This repository contains the source files created for the making of the CDM324 project described on <a href="https://www.limpkin.fr">limpkin.fr
+This repository contains the source files created for the making of the CDM324 project described on <a href="https://www.limpkin.fr/index.php?post/2022/03/31/CDM324-Doppler-Motion-Sensor-Backpack%2C-now-with-FFTs%21">limpkin.fr</a>  
+The assembly may be purchased here: <a href="https://www.tindie.com/products/stephanelec/cdm324-doppler-speed-sensor/">US shop</a> / <a href="https://lectronz.com/products/cdm324-doppler-speed-sensor">EU shop</a>   
 <p align="center">
   <img src="https://github.com/limpkin/cdm324_fft/blob/main/assets/cdm_and_exp.JPG?raw=true" alt="CDM324"/>
 </p>
