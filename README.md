@@ -20,3 +20,5 @@ The assembly may be purchased here: <a href="https://www.tindie.com/products/ste
 
 To connect the device to an external platform through UART, please use the MCU UART RX/TX pins shown above.   
 The baud rate is 1Mbit/s, speed can be queried by sending the 'k' character for km/h or the 'm' character for mph.  
+**In case of doubt about the UART connection**, reboot the device: it should output through UART a "CDM324 fw...." string.  
+**Make sure your target device can handle 1MBit/s**. If that's not the case, head to the [release section](https://github.com/limpkin/cdm324_fft/releases)https://github.com/limpkin/cdm324_fft/releases to download firmware with different baud rates.
