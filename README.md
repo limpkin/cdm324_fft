@@ -40,3 +40,75 @@ If you don't have the companion expansion board, you may use [STM32 Flash loader
 - bring BOOT0 to 3V3_OUT  
 - release nRESET  
 - releae BOOT0  
+
+## Sample Arduino code to fetch speed from device
+
+```c
+#define RESET_PIN 2
+
+void issue_cdm324_reset()
+{  
+  bool string_received = false;
+  char receive_buffer[50];
+  int index = 0;
+
+  // 20ms reset
+  pinMode(RESET_PIN, OUTPUT);
+  delay(20);
+  pinMode(RESET_PIN, INPUT);
+
+  // get string
+  while (string_received == false)
+  {
+    if (Serial1.available() > 0)
+    {
+      char bla = Serial1.read();
+      receive_buffer[index++] = bla;
+      if (bla == '\n')
+        string_received = true;
+    }
+  }
+  receive_buffer[index] = 0;
+
+  Serial.println("Received from the CDM324:");
+  Serial.println(receive_buffer);
+}
+
+void setup() 
+{
+  // Local console
+  Serial.begin(115200);
+  Serial.println("Hello there!");
+
+  // To the CDM324
+  Serial1.begin(57600);
+
+  // Reset CDM324
+  pinMode(RESET_PIN, INPUT);
+  digitalWrite(RESET_PIN, LOW);
+  issue_cdm324_reset();
+}
+
+float get_speed(bool kmh)
+{
+  if (kmh == true)
+  {
+    // Query km/h * 10
+    Serial1.print('k');
+  }
+  else
+  {
+    // Query mph * 10
+    Serial1.print('m');
+  }  
+  while(Serial1.available() == 0);
+  float speed = Serial1.parseFloat();
+  return (speed / 10);
+}
+
+void loop()
+{
+  Serial.println(get_speed(false));
+  delay(500);
+}
+```
