@@ -18,6 +18,7 @@ The assembly may be purchased here: <a href="https://www.tindie.com/products/ste
 
 <b>UART connection</b>  
 
+**The UART connection is 3V3 and NOT 5V.**
 To connect the device to an external platform through UART, please use the MCU UART RX/TX pins shown above.   
 The baud rate is **1Mbit/s**, speed **can be queried** by **sending the 'k'** character for km/h or the 'm' character for mph.  
 **In case of doubt about the UART connection, reboot the device**: it should output "CDM324 fw....".  
