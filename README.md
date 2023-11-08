@@ -16,11 +16,10 @@ The assembly may be purchased here: <a href="https://www.tindie.com/products/ste
   <img src="https://www.limpkin.fr/public/cdm324_v2/exp_pinout.png" width="500" alt="CDM324"/>
 </p>
 
-<b>Unit change to km/h</b>  
+### Unit change to km/h  
 To change the speed readout to km/h, connect the "PA1/KMH" pad to the "GND" pad in the above diagram.  
 
-<b>UART connection</b>  
-
+### UART connection  
 **The UART connection is 3V3 and NOT 5V.**  
 To connect the device to an external platform through UART, please use the MCU UART RX/TX pins shown above.   
 The baud rate is **1Mbit/s**, speed **can be queried** by **sending the 'k'** character for km/h or the 'm' character for mph.  
