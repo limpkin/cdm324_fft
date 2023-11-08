@@ -16,6 +16,9 @@ The assembly may be purchased here: <a href="https://www.tindie.com/products/ste
   <img src="https://www.limpkin.fr/public/cdm324_v2/exp_pinout.png" width="500" alt="CDM324"/>
 </p>
 
+<b>Unit change to km/h</b>  
+To change the speed readout to km/h, connect the "PA1/KMH" pad to the "GND" pad in the above diagram.  
+
 <b>UART connection</b>  
 
 **The UART connection is 3V3 and NOT 5V.**  
