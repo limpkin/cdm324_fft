@@ -10,5 +10,5 @@ Pull requests are however welcome!
 
 2) Install python and the required modules
 ```
-pip install pyqt5 chaco stm32loader pyserial scipy
+pip install pyqt5 chaco stm32loader pyserial scipy keyboard
 ```
