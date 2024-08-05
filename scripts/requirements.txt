@@ -1,0 +1,8 @@
+numpy<2
+git+https://github.com/enthought/enable.git@84b611dcc329c7558f5512b861fb8e002f90f39f
+git+https://github.com/capn-freako/chaco@28eb0bc020142616d986a6242a3cac8d4b604f4a
+pyqt5
+stm32loader
+pyserial
+scipy
+keyboard
